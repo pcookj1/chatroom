@@ -7,8 +7,7 @@ SOURCES += main.cpp \
     server.cpp
 
 HEADERS += \
-    server.h \
-    serverthreads.h
+    server.h
 
 QMAKE_CXXFLAGS += -std=c++0x -pthread
 LIBS += -pthread

@@ -20,22 +20,15 @@
 class User {
 public:
     User(int clientSocket, socklen_t clientLen, struct sockaddr_in clientAddress);
+    bool operator== (const User& u);
     ~User();
 private:
+    const char *username;
     int clientSocket;
     socklen_t clientLen;
     struct sockaddr_in  clientAddress;
-    //add thread function
-    //void userThread();
     friend class Server;
 };
-
-/* TO DO - implement chat archive (database?)
-class Chat {
-
-
-};
-*/
 
 class Server {
 public:
@@ -46,16 +39,22 @@ public:
 private:
     int port;
     const char *ip;
-    char message[BUF_SIZE]; //doesn't make sense to have this
     int listenSocket;
-    std::list<User> users;
     struct sockaddr_in serverAddress;
-    std::thread entry; //prob get rid of this
+    std::list<User> users; //pointer to list of objects
     std::list<std::thread> userThreads;
-    void broadcastMessages(char *message);
+    void broadcastMessages(char const *message);
     void handleNewUsers();
-    void userThread(User const *connection);
-    void userExit();
+    void userThread(User *connection);
+    void closeConnection(User *connection);
+    void checkConnections();
 };
+
+/* TO DO - implement chat archive (database?)
+class Chat {
+
+
+};
+*/
 
 #endif // SERVER_H
