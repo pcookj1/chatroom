@@ -11,28 +11,14 @@
 #include <sys/socket.h>
 
 #include <list>
+#include <mutex>
 #include <thread>
 
-#define BUF_SIZE 255
-
-// TO DO: move userThread to User class and make server inherit User
-// More intuitive and may come in handy when deleting a user and ending their thread.
-class User {
-public:
-    User(int clientSocket, socklen_t clientLen, struct sockaddr_in clientAddress);
-    bool operator== (const User& u);
-    ~User();
-private:
-    const char *username;
-    int clientSocket;
-    socklen_t clientLen;
-    struct sockaddr_in  clientAddress;
-    friend class Server;
-};
+#include "userthread.h"
 
 class Server {
 public:
-    Server(int port, const char *ip = "127.0.0.1");
+    Server(int nPort, const char *nip = "127.0.0.1");
     void initServer();
     void startServer();
     ~Server();
@@ -41,13 +27,9 @@ private:
     const char *ip;
     int listenSocket;
     struct sockaddr_in serverAddress;
-    std::list<User> users; //pointer to list of objects
-    std::list<std::thread> userThreads;
-    void broadcastMessages(char const *message);
-    void handleNewUsers();
-    void userThread(User *connection);
-    void closeConnection(User *connection);
-    void checkConnections();
+    std::list<UserThread*> users;
+    std::mutex usersMutex;
+    void handleNewConnections();
 };
 
 /* TO DO - implement chat archive (database?)

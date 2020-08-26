@@ -4,10 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    server.cpp
+    server.cpp \
+    userthread.cpp
 
 HEADERS += \
-    server.h
+    server.h \
+    userthread.h
 
 QMAKE_CXXFLAGS += -std=c++0x -pthread
 LIBS += -pthread
