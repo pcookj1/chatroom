@@ -51,14 +51,14 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../clientchatroom/main.cpp \
-		../clientchatroom/client.cpp \
-		../clientchatroom/chatroom.cpp moc_client.cpp \
-		moc_chatroom.cpp
+		../clientchatroom/chatroom2.cpp \
+		../clientchatroom/client.cpp moc_chatroom.cpp \
+		moc_client.cpp
 OBJECTS       = main.o \
+		chatroom2.o \
 		client.o \
-		chatroom.o \
-		moc_client.o \
-		moc_chatroom.o
+		moc_chatroom.o \
+		moc_client.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -135,10 +135,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../clientchatroom/clientchatroom.pro ../clientchatroom/client.h \
-		../clientchatroom/chatroom.h ../clientchatroom/main.cpp \
-		../clientchatroom/client.cpp \
-		../clientchatroom/chatroom.cpp
+		../clientchatroom/clientchatroom.pro ../clientchatroom/chatroom.h \
+		../clientchatroom/client.h ../clientchatroom/main.cpp \
+		../clientchatroom/chatroom2.cpp \
+		../clientchatroom/client.cpp
 QMAKE_TARGET  = clientchatroom
 DESTDIR       = 
 TARGET        = clientchatroom
@@ -328,8 +328,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../clientchatroom/client.h ../clientchatroom/chatroom.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../clientchatroom/main.cpp ../clientchatroom/client.cpp ../clientchatroom/chatroom.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../clientchatroom/chatroom.h ../clientchatroom/client.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../clientchatroom/main.cpp ../clientchatroom/chatroom2.cpp ../clientchatroom/client.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../clientchatroom/chatroom.ui $(DISTDIR)/
 
 
@@ -362,19 +362,19 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_client.cpp moc_chatroom.cpp
+compiler_moc_header_make_all: moc_chatroom.cpp moc_client.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_client.cpp moc_chatroom.cpp
-moc_client.cpp: ../clientchatroom/client.h \
-		moc_predefs.h \
-		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/pcook/code_practice/qtapps/cryptochatroom/clientchatroom -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../clientchatroom/client.h -o moc_client.cpp
-
+	-$(DEL_FILE) moc_chatroom.cpp moc_client.cpp
 moc_chatroom.cpp: ../clientchatroom/client.h \
 		../clientchatroom/chatroom.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/pcook/code_practice/qtapps/cryptochatroom/clientchatroom -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../clientchatroom/chatroom.h -o moc_chatroom.cpp
+
+moc_client.cpp: ../clientchatroom/client.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/pcook/code_practice/qtapps/cryptochatroom/clientchatroom -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../clientchatroom/client.h -o moc_client.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -399,19 +399,19 @@ main.o: ../clientchatroom/main.cpp ../clientchatroom/chatroom.h \
 		../clientchatroom/client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../clientchatroom/main.cpp
 
+chatroom2.o: ../clientchatroom/chatroom2.cpp ../clientchatroom/chatroom.h \
+		../clientchatroom/client.h \
+		ui_mainwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chatroom2.o ../clientchatroom/chatroom2.cpp
+
 client.o: ../clientchatroom/client.cpp ../clientchatroom/client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client.o ../clientchatroom/client.cpp
 
-chatroom.o: ../clientchatroom/chatroom.cpp ../clientchatroom/chatroom.h \
-		../clientchatroom/client.h \
-		ui_mainwindow.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chatroom.o ../clientchatroom/chatroom.cpp
+moc_chatroom.o: moc_chatroom.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_chatroom.o moc_chatroom.cpp
 
 moc_client.o: moc_client.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_client.o moc_client.cpp
-
-moc_chatroom.o: moc_chatroom.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_chatroom.o moc_chatroom.cpp
 
 ####### Install
 

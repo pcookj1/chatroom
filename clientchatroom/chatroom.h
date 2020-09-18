@@ -31,18 +31,20 @@ public:
     explicit ChatRoom(QWidget *parent = 0);
     ~ChatRoom();
 private slots:
-    void onMessageToProcess();
-    void exitServerPage();
-    void submitLoginInfo();
-    void submitChatMessage();
-    void loginSuccessful();
-    void loginUnsuccessful();
+    void attemptConnection();
+    void connectedToServer();
+    void tryLogin(const QString &userName);
+    void loggedIn();
+    void loginFailed(const QString &error);
+    void messageReceived(const QString &user, const QString &msg);
+    void sendMessage();
+    void disconnectedFromServer();
+    void addUser(const QString &user);
+    void deleteUser(const QString &user);
+    void error(QAbstractSocket::SocketError socketError);
 private:
     Ui::ChatRoom *ui;
     Client *client;
-    QString userName;
-    void handleUserList(QString newUser);
-    void addMessageToChatRoom(QString *msg);
 };
 
 #endif // CHATROOM_H

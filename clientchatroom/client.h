@@ -29,19 +29,24 @@ class Client : public QObject
 public:
     explicit Client(QObject *parent = nullptr);
     ~Client();
+public slots:
     void connectToServer(QString &serverIp, quint16 serverPort);
-    bool sendMessage(QString msg);
-    QByteArray readMessage();
-    QTcpSocket *clientSocket;
-signals:
-    void serverHasDisconnected();
-    void serverHasConnected();
-    void serverCannotConnect();
-    void messageReady();
-    void disconnectSocket();
+    void login(const QString &userName);
+    void sendMessage(const QString &msg);
+    void disconnectFromServer();
 private slots:
-    void onDisconnectSocket();
-    void notifyServerOfMessage();
+    void processMessage();
+signals:
+    void connected();
+    void loggedIn();
+    void loginFailed(const QString &error);
+    void disconnected();
+    void messageReceived(const QString &user, const QString &msg);
+    void addUser(const QString &user);
+    void deleteUser(const QString &user);
+    void error(QAbstractSocket::SocketError socketError);
+private:
+      QTcpSocket *clientSocket;
 };
 
 

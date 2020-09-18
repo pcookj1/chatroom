@@ -29,8 +29,8 @@ SOURCES += \
     chatroom.cpp
 
 HEADERS += \
-    client.h \
-    chatroom.h
+    chatroom.h \
+    client.h
 
 FORMS += \
     chatroom.ui
