@@ -51,12 +51,12 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../clientchatroom/main.cpp \
-		../clientchatroom/chatroom2.cpp \
-		../clientchatroom/client.cpp moc_chatroom.cpp \
+		../clientchatroom/client.cpp \
+		../clientchatroom/chatroom.cpp moc_chatroom.cpp \
 		moc_client.cpp
 OBJECTS       = main.o \
-		chatroom2.o \
 		client.o \
+		chatroom.o \
 		moc_chatroom.o \
 		moc_client.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -137,8 +137,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../clientchatroom/clientchatroom.pro ../clientchatroom/chatroom.h \
 		../clientchatroom/client.h ../clientchatroom/main.cpp \
-		../clientchatroom/chatroom2.cpp \
-		../clientchatroom/client.cpp
+		../clientchatroom/client.cpp \
+		../clientchatroom/chatroom.cpp
 QMAKE_TARGET  = clientchatroom
 DESTDIR       = 
 TARGET        = clientchatroom
@@ -329,7 +329,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../clientchatroom/chatroom.h ../clientchatroom/client.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../clientchatroom/main.cpp ../clientchatroom/chatroom2.cpp ../clientchatroom/client.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../clientchatroom/main.cpp ../clientchatroom/client.cpp ../clientchatroom/chatroom.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../clientchatroom/chatroom.ui $(DISTDIR)/
 
 
@@ -399,13 +399,13 @@ main.o: ../clientchatroom/main.cpp ../clientchatroom/chatroom.h \
 		../clientchatroom/client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../clientchatroom/main.cpp
 
-chatroom2.o: ../clientchatroom/chatroom2.cpp ../clientchatroom/chatroom.h \
-		../clientchatroom/client.h \
-		ui_mainwindow.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chatroom2.o ../clientchatroom/chatroom2.cpp
-
 client.o: ../clientchatroom/client.cpp ../clientchatroom/client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client.o ../clientchatroom/client.cpp
+
+chatroom.o: ../clientchatroom/chatroom.cpp ../clientchatroom/chatroom.h \
+		../clientchatroom/client.h \
+		ui_mainwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chatroom.o ../clientchatroom/chatroom.cpp
 
 moc_chatroom.o: moc_chatroom.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_chatroom.o moc_chatroom.cpp
