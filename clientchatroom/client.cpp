@@ -1,76 +1,84 @@
-/*  Patrick Cook
- *  Implementation for Client component of chat room
- *  8/18/20
+/*****************************************************************
+ * Filename: client.cpp
  *
-*/
+ * Author: Patrick Cook
+ * Start Date: 20 Aug 20
+ *
+ * Description: Implementation for Client class
+ * Handles connecting, disconnecting to server socket
+ * Signals ChatRoom if a message has arrived and if the server
+ * has disconnected
+ *
+*****************************************************************/
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-#include <iostream>
+#include <QByteArray>
+#include <QObject>
+#include <QString>
+#include <QTcpSocket>
 
 #include "client.h"
 
-using namespace std;
 
-Client::Client(int port, const char *ip) {
-    this->port = port;
-    this->ip = ip;
+Client::Client(QObject *parent) : QObject(parent) {
+
+    clientSocket = new QTcpSocket(this);
+
+    // Connect QTcpSocket signals to slots
+    connect(clientSocket, SIGNAL(readyRead()),
+            this, SLOT(notifyServerOfMessage()));
+    connect(clientSocket, SIGNAL(disconnected()),
+            this, SLOT(onDisconnectSocket()));
+    connect(this, SIGNAL(disconnectSocket()),
+            this, SLOT(onDisconnectSocket()));
+    connect(clientSocket, SIGNAL(connected()),
+            this, SIGNAL(serverHasConnected()));
+    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SIGNAL(serverCannotConnect()));
 }
 
-void Client::initClient() {
-    listenSock = socket(AF_INET, SOCK_STREAM, 0);
-    if(listenSock < 0)
-        perror("Error opening client socket");
-    servAddr.sin_family = AF_INET;
-    servAddr.sin_addr.s_addr = inet_addr(ip);
-    servAddr.sin_port = htons(port);
-
-    if(connect(listenSock, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0)
-        perror("Error connecting client to socket");
-    cout << "Client connected to socket succesfully\n" << endl;
+void Client::connectToServer(QString &serverIp, quint16 serverPort) {
+    qInfo() << "Entering connectToServer";
+    clientSocket->connectToHost(serverIp, serverPort);
+    //return clientSocket->waitForConnected(LOGIN_TIMEOUT);
+    qInfo() << "Exiting connectToServer";
 }
 
-void Client::sendClient() {
-    cout << "Type messages (max BUF_SIZE chars)\n" << endl;
-    //cout << "Sending message..." << endl;
-    //strcpy(message, "Hey I'm Client Patrick!\n");
-    //cout << "You wrote:" << message << endl;
-    fgets(message, BUF_SIZE, stdin);
-    if(write(listenSock, message, BUF_SIZE) < 0)
-        perror( "Error writing message to socket");
-}
-
-void Client::receiveClient() {
-    int result, bytesRead = 0;
-    //cout << "Receiving message..." << endl;
-    /*while(bytesRead < BUF_SIZE) {
-        cout << "iterating loop again" << endl;
-        result = read(listenSock, message + bytesRead, BUF_SIZE - bytesRead);
-        cout << "Bytes read" << result << endl;
-        if(result == 0) {
-            cout << "Done reading socket" << endl;
-            break;
-        } else if(result < 0)
-            perror( "Error reading from the socket");
-        bytesRead += result;
-    } */
-    while(1) {
-        result = read(listenSock, message, BUF_SIZE);
-        if(result < 0)
-            perror("Error reading user's socket\n");
-        else if(result == 0)
-            continue;
-        cout << "Message is: " << message << endl;
+bool Client::sendMessage(QString msg) {
+    qInfo() << "inside sendMessage";
+    if(msg.startsWith("/exit")) {
+        qInfo() << "user requested to disconnect socket";
+        emit disconnectSocket();
+        return false;
     }
-   // result = read(listenSock, message + bytesRead, BUF_SIZE - bytesRead);
-   // cout << "Message is: " << message << endl;
+
+    if(clientSocket->state() == QAbstractSocket::ConnectedState) {
+        clientSocket->write(msg.toUtf8());
+        return clientSocket->waitForBytesWritten();
+    } else {
+        return false;
+    }
+}
+
+QByteArray Client::readMessage() {
+    qInfo() << "inside readMessage";
+    QByteArray message;
+    message = clientSocket->read(BUF_SIZE);
+    return message;
+}
+
+void Client::onDisconnectSocket() {
+    qInfo() << "Entering disconnectSocket";
+    clientSocket->disconnectFromHost();
+    qInfo() << "Exiting disconnectSocket";
+    emit serverHasDisconnected();
+}
+
+void Client::notifyServerOfMessage() {
+    qInfo() << "notifying server of message";
+    emit messageReady();
 }
 
 Client::~Client() {
 
+    delete clientSocket;
 }

@@ -1,8 +1,15 @@
-/*  Author: Patrick Cook
- *  Interface for Server component of chat room
- *  8/18/20
+/*****************************************************************
+ * Filename: server.h
  *
-*/
+ * Author: Patrick Cook
+ * Start Date: 20 Aug 20
+ *
+ * Description: Interface for Server class
+ * Provides members for starting the server,
+ * storing the server socket information, storing current users,
+ * and spawning a threads to handle user connections
+ *
+*****************************************************************/
 
 #ifndef SERVER_H
 #define SERVER_H
@@ -16,9 +23,10 @@
 
 #include "userthread.h"
 
+
 class Server {
 public:
-    Server(int nPort, const char *nip = "127.0.0.1");
+    Server(const char *nIp, int nPort);
     void initServer();
     void startServer();
     ~Server();
@@ -31,12 +39,5 @@ private:
     std::mutex usersMutex;
     void handleNewConnections();
 };
-
-/* TO DO - implement chat archive (database?)
-class Chat {
-
-
-};
-*/
 
 #endif // SERVER_H
