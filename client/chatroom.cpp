@@ -23,7 +23,7 @@
 
 #include "chatroom.h"
 #include "client.h"
-#include "ui_mainwindow.h"
+#include "ui_chatroom.h"
 
 ChatRoom::ChatRoom(QWidget *parent) :
     QMainWindow(parent),
