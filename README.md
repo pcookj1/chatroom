@@ -14,7 +14,7 @@ Allows client to exit by typing "/exit" or retrieve user list by submitting "/us
 
 Consists of a UserThread class which handles an individual connection, as well as a Server class, which
 listens to incoming requests and creates new UserThreads accordingly.
-Sends fixed sized messages defined by BUF_SIZE, which is 255.
+Sends fixed sized messages defined by BUF_SIZE, which is 255 in this application.
 Requires a newline at the end of every message, which is handled by the client.
 
 # Client
@@ -22,8 +22,10 @@ Client contains the necessary source and header files for building the client si
 Consists of a GUI which allows the user to enter an ip and port in the following format: X.X.X.X:Port
 as well as a username.
 Displays username error and socket error messages to the login screen should login fail.
+The chat page has a window to display incoming user messages, which are uniquely colored and labeled by 
+the user who sent it. It also has a user list where the user font colors match their message colors.
 
-Consists of a ChatRoom class which handles the GUI, a Client class which handles communication with the 
+Consists of a ChatRoom class which handles the GUI, and a Client class which handles communication with the 
 server and sends appropriate signals to the GUI to update the display.
 
 
