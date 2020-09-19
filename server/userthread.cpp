@@ -68,10 +68,8 @@ void UserThread::run() {
     clientThread = std::thread(&UserThread::handleUser, this);
 }
 
-//add failsafe to end connection if thread should terminate unexpectedly
 void UserThread::handleUser() {
 
-    std::cout << "Launched new user thread" << std::endl;
     int result;
     bool runClientThread = true;
 
@@ -101,17 +99,15 @@ void UserThread::handleUser() {
             } else if(!strcmp(message, "/usrlist\n")) {
                 sendActiveUsers();
             } else {
-                std::cout << "  User: " << getUsername() << " is about to broadcast()" << std::endl;
                 broadcastMessage(message, true);
             }
         } catch (int e) {
-            std::cout << "Error reading user's socket" << std::endl;
+            std::cout << "Error Reading from Socket. " << " Error: " << e << std::endl;
             runClientThread = false;
         }
     }
 
     // Broadcast exit message to remaining users
-    std::cout << "  User: " << getUsername() << " has requested to disconnect" << std::endl;
     char exitMessage[BUF_SIZE];
     bzero(exitMessage, BUF_SIZE);
     strcpy(exitMessage, getUsername());
@@ -119,21 +115,20 @@ void UserThread::handleUser() {
     broadcastMessage(exitMessage, false);
     signalUserListDisconnection();
     closeConnection();
-    std::cout << "Exiting thread: " << getUsername() << std::endl;
-    //return;
 }
 
 void UserThread::broadcastMessage(char *message, bool appendUsrNmToMsg) {
 
     usersMtx->lock();
-
-    std::cout << "Inside broadcast() message is \"" << message << "\"" <<std::endl;
     if(appendUsrNmToMsg)
         prependUserNameToMessage(message, getUsername());
     for(auto it = usersPtr->begin(); it != usersPtr->end(); ++it) {
-        std::cout << "LOOP: connection to send to is: " << (*it)->getUsername() << std::endl;
-        if(send((*it)->clientSocket, message, BUF_SIZE,0) < 0)
-            std::cout << "Broadcast to user @" << (*it)->getUsername() << " failed" << std::endl;
+        try {
+            if(send((*it)->clientSocket, message, BUF_SIZE,0) < 0)
+                throw 7;
+        } catch (int e) {
+            std::cout << "Broadcast to user @" << (*it)->getUsername() << " failed" << " Error: " << e << std::endl;
+        }
     }
     usersMtx->unlock();
 }
@@ -152,7 +147,7 @@ bool UserThread::isUserNameValid(char *usrNm) const {
             if(send(clientSocket, infoMessage, BUF_SIZE,0) < 0)
                 throw 7;
         } catch (int e) {
-            std::cout << "Login error message failed to send" << std::endl;
+            std::cout << "Login error message failed to send" << " Error: " << e << std::endl;
         }
         return false;
     }
@@ -160,15 +155,13 @@ bool UserThread::isUserNameValid(char *usrNm) const {
     // Check if username is taken
     usersMtx->lock();
     for(auto it = usersPtr->begin(); it != usersPtr->end(); ++it) {
-        std::cout << "Current user is: " << (*it)->getUsername() << std::endl;
         if(std::string((*it)->getUsername()) == userName) {
-            std::cout << "Username already taken" << std::endl;
             strcpy(infoMessage, "[LOGINERROR] Username already taken\n");
             try {
                 if(send(clientSocket, infoMessage, BUF_SIZE,0) < 0)
                     throw 7;
             } catch (int e) {
-                std::cout << "Login error message failed to send" << std::endl;
+                std::cout << "Login error message failed to send" << " Error: " << e << std::endl;
             }
             usersMtx->unlock();
             return false;
@@ -181,7 +174,7 @@ bool UserThread::isUserNameValid(char *usrNm) const {
         if(send(clientSocket, infoMessage, BUF_SIZE,0) < 0)
             throw 8;
     } catch (int e) {
-        std::cout << "Login Success message failed to send" << std::endl;
+        std::cout << "Login Success message failed to send" << " Error: " << e << std::endl;
         return false;
     }
     return true;
@@ -189,7 +182,6 @@ bool UserThread::isUserNameValid(char *usrNm) const {
 
 bool UserThread::requestUsername() {
 
-    std::cout << "Requesting username\n" << std::endl;
     char receivedUsername[USERNAME_SIZE];
     bzero(receivedUsername, USERNAME_SIZE);
 
@@ -198,31 +190,35 @@ bool UserThread::requestUsername() {
             throw 9;
         } else if(isUserNameValid(receivedUsername)) {
             setUserName(receivedUsername);
-            std::cout << "Connection @: " << clientAddress.sin_port << " has username: " << getUsername() << std::endl;
+            std::cout << "Adding username: @" << getUsername() << std::endl;
             return true;
+        } else {
+            return false;
         }
     } catch (int e) {
-        std::cout << "Failed to get username: connection failed. Disconnecting" << std::endl;
+        std::cout << "Failed to get username: connection failed. Disconnecting" << " Error: " << e << std::endl;
         return false;
     }
 }
 
-//TO DO: change to use broadcastMessage()
 void UserThread::sendActiveUsers() {
 
-    usersMtx->lock();
+    std::cout << "User requested userlist" << std::endl;
 
-    std::cout << "Sending user list" << std::endl;
+    usersMtx->lock();
     char userNameToSend[BUF_SIZE];
     for(auto it = usersPtr->begin(); it != usersPtr->end(); ++it) {
-        std::cout << "Attempting to send "<< (*it)->getUsername() << std::endl;
         for(auto it2 = usersPtr->begin(); it2 != usersPtr->end(); ++it2) {
             bzero(userNameToSend, BUF_SIZE);
             strcat(userNameToSend, "[USRADD]");
             strcat(userNameToSend, (*it2)->getUsername());
             strcat(userNameToSend, "\n");
-            if(send((*it)->clientSocket, userNameToSend, BUF_SIZE,0) > 0)
-                std::cout << "Sent user " << getUsername() << " the username: " << (*it)->getUsername() << std::endl;
+            try {
+                if(send((*it)->clientSocket, userNameToSend, BUF_SIZE,0) < 0)
+                    throw 10;
+            } catch (int e) {
+                std::cout << "Failed to send " << (*it)->getUsername() << " the user " << userNameToSend << " Error: " << e << std::endl;
+            }
         }
     }
     usersMtx->unlock();
@@ -238,7 +234,6 @@ void UserThread::signalUserListDisconnection() {
     broadcastMessage(exitUser, false);
 }
 
-//make so prepending the username doesn't cause message buffer overflow
 void UserThread::closeConnection() {
 
     std::cout << "Closing connection. " << std::endl;
@@ -246,19 +241,10 @@ void UserThread::closeConnection() {
 
     usersMtx->lock();
     usersPtr->remove(this);
-    std::cout << "Userlist after disconnection:" << std::endl;
-
-    for(auto it = usersPtr->begin(); it != usersPtr->end(); ++it) {
-        if((*it)->getUsername() == getUsername()){
-            std::cout << "Found the username even after deleting" << std::endl;
-        }
-        std::cout << "@" << (*it)->getUsername() << std::endl;
-    }
     usersMtx->unlock();
 
     clientThread.detach();
     delete this;
-    std::cout << "Exiting thread hopefully" << std::endl;
 }
 
 void UserThread::prependUserNameToMessage(char* msg, const char* usr) {

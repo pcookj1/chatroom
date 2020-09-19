@@ -40,7 +40,7 @@ void Server::initServer() {
         if(listenSocket < 0)
             throw 1;
     } catch(int e) {
-        std::cout << "Server socket could not be opened. Exiting Server" << std::endl;
+        std::cout << "Server socket could not be opened. Exiting Server" << " Error: " << e << std::endl;
         return;
     }
 
@@ -52,7 +52,7 @@ void Server::initServer() {
         if(bind(listenSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) < 0)
             throw 2;
     } catch (int e) {
-        std::cout << "Server socket could not be binded. Exiting Server" << std::endl;
+        std::cout << "Server socket could not be binded. Exiting Server" << " Error: " << e << std::endl;
         return;
     }
     std::cout << "Server socket binded..." << std::endl;
@@ -65,7 +65,7 @@ void Server::startServer() {
         if(listen(listenSocket,1) < 0)
             throw 3;
     } catch (int e) {
-        std::cout << "Error listening to socket. Exiting Server" << std::endl;
+        std::cout << "Error listening to socket. Exiting Server" << " Error: " << e << std::endl;
         return;
     }
     handleNewConnections();
@@ -84,7 +84,7 @@ void Server::handleNewConnections() {
             if(nClientSocket < 0)
                 throw 4;
         } catch (int e){
-            std::cout << "Error accepting socket. Proceeding to accept new clients" << std::endl;
+            std::cout << "Error accepting socket. Proceeding to accept new clients" << " Error: " << e << std::endl;
             continue;
         }
 
