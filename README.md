@@ -3,7 +3,7 @@ Simple Server/Client chatroom application built with Qt 5.9.5. The server side i
 Qt. This was done to explore the differences between implementing socket programming more tediously using the C socket library 
 (server side) and an approach using Qt's networking module (client side). 
 
-#Building Project using Qt Creator
+# Building Project using Qt Creator
 Download the server and client projects and build them separately.
 
 The server is a terminal application.
