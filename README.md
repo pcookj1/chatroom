@@ -4,10 +4,9 @@ Qt. This was done to explore the differences between implementing socket program
 (server side) and an approach using Qt's networking module (client side). 
 
 # Building Project using Qt Creator
-Download the server and client projects and build them separately.
+Download the server and client projects and build them separately. The executables are then found in the default build directory set by Qt Creator for the project. In this project, the build directory is "build_files".
 
-The server is a terminal application.
-The client has a GUI.
+The server is a terminal application while the client has a GUI.
 
 # Server
 Server contains the necessary source and header files for building the server side of the project.
