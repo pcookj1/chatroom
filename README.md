@@ -1,7 +1,10 @@
 # chatroom
-Simple Server/Client chatroom application built with Qt. The server side is built in plain C++ while the client side uses
+Simple Server/Client chatroom application built with Qt 5.9.5. The server side is built in plain C++ while the client side uses
 Qt. This was done to explore the differences between implementing socket programming more tediously using the C socket library 
 (server side) and an approach using Qt's networking module (client side). 
+
+#Building Project using Qt Creator
+Download the server and client projects and build them separately.
 
 The server is a terminal application.
 The client has a GUI.
@@ -13,7 +16,7 @@ Validates clients' usernames to ensure they are 6-16 characters long and contain
 Allows client to exit by typing "/exit" or retrieve user list by submitting "/usrlist".
 
 Consists of a UserThread class which handles an individual connection, as well as a Server class, which
-listens to incoming requests and creates new UserThreads accordingly.
+listens to incoming requests and creates new threads upon an accepted connection.
 Sends fixed sized messages defined by BUF_SIZE, which is 255 in this application.
 Requires a newline at the end of every message, which is handled by the client.
 
@@ -25,7 +28,7 @@ Displays username error and socket error messages to the login screen should log
 The chat page has a window to display incoming user messages, which are uniquely colored and labeled by 
 the user who sent it. It also has a user list where the user font colors match their message colors.
 
-Consists of a ChatRoom class which handles the GUI, and a Client class which handles communication with the 
+Consists of a chat room window for the GUI, and a Client class which handles communication with the 
 server and sends appropriate signals to the GUI to update the display.
 
 
