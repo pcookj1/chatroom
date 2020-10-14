@@ -10,6 +10,7 @@ Run ./client to open the client GUI.
 Run ./server IP Port to run a server on a IP:Port.
 
 The server is a terminal application while the client has a GUI.
+![Image of Login](https://github.com/pcookj1/chatroom/loginscreen.png)
 
 # Server
 Server contains the necessary source and header files for building the server side of the project.
