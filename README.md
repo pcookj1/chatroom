@@ -3,8 +3,11 @@ Simple Server/Client chatroom application built with Qt 5.9.5. The server side i
 Qt. This was done to explore the differences between implementing socket programming more tediously using the C socket library 
 (server side) and an approach using Qt's networking module (client side). 
 
-# Building Project using Qt Creator
+# Building and Running Project using Qt Creator
 Download the server and client projects and build them separately. The executables are then found in the default build directory set by Qt Creator for the project. In this project, the build directory is "build_files".
+
+Run ./client to open the client GUI.
+Run ./server IP Port to run a server on a IP:Port.
 
 The server is a terminal application while the client has a GUI.
 
