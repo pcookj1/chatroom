@@ -11,6 +11,8 @@ Run ./server IP Port to run a server on a IP:Port.
 
 The server is a terminal application while the client has a GUI.
 ![Image of Login](https://github.com/pcookj1/chatroom/blob/master/loginscreen.png?raw=true)
+![Image of Chat](https://github.com/pcookj1/chatroom/blob/master/chatscreen.png?raw=true)
+![Image of Server](https://github.com/pcookj1/chatroom/blob/master/serverterminal.png?raw=true)
 
 # Server
 Server contains the necessary source and header files for building the server side of the project.
