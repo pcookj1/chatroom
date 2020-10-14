@@ -18,7 +18,7 @@ The server is a terminal application while the client has a GUI.
 Server contains the necessary source and header files for building the server side of the project.
 It is implemented using the C socket library and uses multithreading to handle multiple clients.
 Validates clients' usernames to ensure they are 6-16 characters long and contain no special characters.
-Allows client to exit by typing "/exit" or retrieve user list by submitting "/usrlist".
+Allows client to exit by typing "/exit".
 
 Consists of a UserThread class which handles an individual connection, as well as a Server class, which
 listens to incoming requests and creates new threads upon an accepted connection.
